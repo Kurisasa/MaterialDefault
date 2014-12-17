@@ -6,9 +6,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import de.greenrobot.event.EventBus;
 
 
 public class SubActivity extends ActionBarActivity {
+
+    TextView HelloWorld, Banana;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +26,30 @@ public class SubActivity extends ActionBarActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        HelloWorld = (TextView) findViewById(R.id.tvHelloWorld);
+        Banana = (TextView) findViewById(R.id.tvBanana);
+
     }
 
+    // This method will be called when a MessageEvent is posted
+    public void onEventMainThread(MessageEvent event){
+        // Toast.makeText(SubActivity.this, event.message, Toast.LENGTH_SHORT).show();
+        HelloWorld.setText(event.text);
+        Banana.setText(event.banana);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().registerSticky(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
